@@ -18,6 +18,18 @@ done
 
 echo "Deployment process finished, checking success of deployment"
 
+until [ "$(environment_health)" != "Yellow" ]
+do
+  echo 'Waiting for healthy state to update ...'
+  ((count++))
+  if [ ${count} -gt 60 ]
+  then
+    echo "Environment in the 'Yellow' state for more than 60 seconds"
+    exit 1
+  fi
+  sleep 1
+done
+
 if [ "$(environment_health)" == "Green" ]
 then
   echo "Environment in a healthy state"
